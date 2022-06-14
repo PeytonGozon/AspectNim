@@ -3,7 +3,7 @@ package nim.aspects
 import foam.{NFA, State}
 import foam.aspects.{AroundState, Aspect, Joinpoint, Pointcutter}
 import nim.states.GameState
-import nim.tokens.Turn
+import nim.tokens.TurnToken
 import nim.utils.Move
 
 class LegalMove(moves: Seq[Move], threshold: Int = 0) extends Aspect[NFA] {
@@ -27,14 +27,16 @@ class LegalMove(moves: Seq[Move], threshold: Int = 0) extends Aspect[NFA] {
 
       // Calculate the number of tokens remaining in each heap as the
       // elementwise-sum of the current heap totals and the heapUpdateSlice.
-      val newHeapQuantities = thisJoinPoint.point.heaps zip heapUpdateSlice map(t => t._1 + t._2)
+      val newHeapQuantities = thisJoinPoint.point.heaps zip heapUpdateSlice map (t => t._1 + t._2)
 
       val newNFA = thisNFA.addTransition(
-        (thisJoinPoint.point, Turn(heapUpdateSlice)),
-        GameState(newHeapQuantities, newHeapQuantities.forall(_ == threshold))
+        (thisJoinPoint.point, TurnToken(heapUpdateSlice)),
+        GameState(newHeapQuantities/*, newHeapQuantities.forall(_ == threshold)*/)
       )
 
       (thisJoinPoint.point, newNFA)
     })
   }
+
+  override def toString: String = "LM " + moves.toString()
 }

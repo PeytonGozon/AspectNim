@@ -15,7 +15,7 @@ object Nim {
   }
 
   def apply(initialHeaps: Vector[Int], features: List[Aspect[NFA]]): NFA = {
-    implicit var fsm: NFA = new NFA(start).addTransition((start, Lambda), GameState(initialHeaps, isAccept = false))
+    implicit var fsm: NFA = new NFA(start).addTransition((start, Lambda), GameState(initialHeaps/*, isAccept = false*/))
 
     val finalFSM = Weaver[NFA](features, fsm, (before: NFA, after: NFA) => before.isEqual(after))
 
